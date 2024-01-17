@@ -1,11 +1,10 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Button,
   ImageBackground,
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
+  StatusBar
 } from "react-native";
 import {
   GoogleSignin,
@@ -18,13 +17,10 @@ import { useNavigation } from "@react-navigation/native";
 export default function App() {
   const { signinWithGoogle, user, logOut, error, loading } = useAuth();
   const navigation = useNavigation();
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [user]);
+
 
   return (
+    <>
     <View className="flex-1">
       <ImageBackground
         resizeMode="cover"
@@ -38,7 +34,7 @@ export default function App() {
           <Text className="text-center">
             {loading ? "loading..." : "Sign In"}
           </Text>
-          {user && <Text>{JSON.stringify(user.idToken)}</Text>}
+          <Text>{JSON.stringify(user)}</Text>
           {error && <Text>error{JSON.stringify(error)}</Text>}
           {user ? (
             <Button title="logout" onPress={logOut} />
@@ -53,5 +49,6 @@ export default function App() {
         </TouchableOpacity>
       </ImageBackground>
     </View>
+  </>
   );
 }

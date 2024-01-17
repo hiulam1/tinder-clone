@@ -1,20 +1,58 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
-import { firebase } from "@react-native-firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import Swiper from "react-native-deck-swiper";
 
+const dummyData = [
+  {
+    firstName: "logan",
+    lastName: "paul",
+    occupation: "youtuber",
+    age: 27,
+    photoURL:
+      "https://pbs.twimg.com/profile_images/1435507960/Logan_Paul_400x400.jpg",
+  },
+  {
+    firstName: "terri",
+    lastName: "chan",
+    occupation: "unemployed",
+    age: 28,
+    photoURL:
+      "https://pbs.twimg.com/profile_images/1435507960/Logan_Paul_400x400.jpg",
+  },
+];
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { user, error, firebaseError, logOut } = useAuth();
+  console.log(user);
 
   return (
-    <View>
-      <Text>
-        HomeScreen
+    <SafeAreaView>
+      <View className="flex-row justify-between items-center px-5">
+        <TouchableOpacity onPress={logOut}>
+          <Image
+            className="w-10 h-10 rounded-full"
+            source={{ uri: user.photoURL }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Image
+            className="w-14 h-14 rounded-full"
+            source={require("../assets/tinder-logo.png")}
+          ></Image>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+          <Ionicons name="chatbubble-outline" size={30} color="black" />
+        </TouchableOpacity>
+      </View>
+      <Swiper cards={dummyData} />
+      {/* <Text>
         {user ? (
           <>
-            <Text>{JSON.stringify(user.email)}</Text>{" "}
+            <Text>fds{JSON.stringify(user.email)}</Text>{" "}
             <Button title="logout" onPress={logOut}></Button>
           </>
         ) : null}
@@ -23,8 +61,8 @@ const HomeScreen = () => {
       <Button
         title="Go to Chat"
         onPress={() => navigation.navigate("Chat")}
-      ></Button>
-    </View>
+      ></Button> */}
+    </SafeAreaView>
   );
 };
 

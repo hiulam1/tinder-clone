@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { WEBCLIENTID } from "@env";
+import { WEBCLIENTID } from "@env"
 import {
   GoogleSignin,
   statusCodes,
@@ -62,10 +62,10 @@ export const AuthProvider = ({ children }) => {
         setError("play services not available or outdated");
         return;
       }
-      await GoogleSignin.configure(config);
+      const googleSignin = await GoogleSignin.configure(config);
+
       setLoading(true);
       const userInfo = await GoogleSignin.signIn();
-      setUserInfo(userInfo.user);
 
       const googleCredential = GoogleAuthProvider.credential(
         userInfo.idToken,
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
         return "play services not available";
       default:
-        return errorCode.message || "unknown error";
+        return errorCode || "unknown error";
     }
   }
 
