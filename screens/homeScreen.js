@@ -4,26 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Swiper from "react-native-deck-swiper";
+import Deck from "../components/Deck";
 
-const dummyData = [
-  {
-    firstName: "logan",
-    lastName: "paul",
-    occupation: "youtuber",
-    age: 27,
-    photoURL:
-      "https://pbs.twimg.com/profile_images/1435507960/Logan_Paul_400x400.jpg",
-  },
-  {
-    firstName: "terri",
-    lastName: "chan",
-    occupation: "unemployed",
-    age: 28,
-    photoURL:
-      "https://pbs.twimg.com/profile_images/1435507960/Logan_Paul_400x400.jpg",
-  },
-];
+import dummyData from "../components/dummyData";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { user, error, firebaseError, logOut } = useAuth();
@@ -48,7 +32,8 @@ const HomeScreen = () => {
           <Ionicons name="chatbubble-outline" size={30} color="black" />
         </TouchableOpacity>
       </View>
-      <Swiper cards={dummyData} />
+      <Deck dummyData={dummyData} />
+
       {/* <Text>
         {user ? (
           <>
