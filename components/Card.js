@@ -2,7 +2,7 @@ import { View, Text, Image } from "react-native";
 import { Dimensions } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
@@ -13,24 +13,24 @@ const cardHeight = windowHeight * 0.85;
 const Card = ({ profile }) => {
   return (
     <>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          backgroundColor: "white",
-        }}
-      >
+      <View style={styles.container}>
         <View className="mt-7 shadow-lg" style={styles.card}>
           <Image
             source={{ uri: profile.photoURL }}
-            style={{ height: "100%", width: "100%", borderRadius: 20 }}
+            style={styles.image}
             resizeMode="cover"
           ></Image>
           <AntDesign
             name="closecircleo"
             size={50}
             color="#fe3c72"
-            style={styles.noButton}
+            style={[styles.yesAndNoButton, styles.noButton]}
+          />
+          <Ionicons
+            name="heart-circle-outline"
+            size={64}
+            color="#148c5c"
+            style={[styles.yesAndNoButton, styles.yesButton]}
           />
           <Text style={styles.cardName}>{profile.firstName}</Text>
         </View>
@@ -40,6 +40,12 @@ const Card = ({ profile }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+
   card: {
     height: cardHeight,
     width: cardWidth,
@@ -53,11 +59,21 @@ const styles = StyleSheet.create({
     bottom: 120,
     left: 30,
   },
-  noButton: {
+  yesAndNoButton: {
     position: "absolute",
-    bottom: 40,
+  },
+  noButton: {
     left: 70,
-    fontWeight: "bold",
+    bottom: 40,
+  },
+  yesButton: {
+    right: 70,
+    bottom: 31,
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+    borderRadius: 20,
   },
 });
 
