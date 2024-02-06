@@ -10,18 +10,34 @@ import React from "react";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useAuth from "../hooks/useAuth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const ModalScreen = () => {
-  const { user } = useAuth();
-  const { image, setImage } = useState(null);
-  const { occupation, setOccupation } = useState("");
-  const { age, setAge } = useState("");
+  const navigation = useNavigation();
 
-  const updateUserProfile = () => {
-    setDoc(doc(db, "users", user.uid));
+  const { user } = useAuth();
+  const [image, setImage] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [age, setAge] = useState("");
+
+  const updateUserProfile = async () => {
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        id: user.uid,
+        displayName: user.displayName,
+        photoURL: image,
+        occupation: occupation,
+        age: age,
+        timestamp: serverTimestamp(),
+      });
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log("Error updating user profile", error);
+    }
   };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 items-center ">
@@ -37,14 +53,26 @@ const ModalScreen = () => {
           please enter profile URL
         </Text>
         <TextInput
+          onChangeText={setImage}
           style={styles.text}
           placeholder="upload profile pic"
         ></TextInput>
         <Text style={[styles.redText, styles.text]}>Update occupation</Text>
-        <TextInput style={styles.text} placeholder="occupation"></TextInput>
+        <TextInput
+          style={styles.text}
+          placeholder="occupation"
+          onChangeText={setOccupation}
+        ></TextInput>
         <Text style={[styles.redText, styles.text]}>Update age</Text>
-        <TextInput style={styles.text} placeholder="age"></TextInput>
-        <TouchableOpacity className=" p-3 rounded-xl absolute bottom-4 bg-red-400 ">
+        <TextInput
+          style={styles.text}
+          placeholder="age"
+          onChangeText={setAge}
+        ></TextInput>
+        <TouchableOpacity
+          className=" p-3 rounded-xl absolute bottom-4 bg-red-400 "
+          onPress={updateUserProfile}
+        >
           <Text style={{ fontSize: 18, color: "white" }}>Update profile</Text>
         </TouchableOpacity>
       </View>
