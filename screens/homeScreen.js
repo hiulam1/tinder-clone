@@ -22,7 +22,11 @@ const HomeScreen = () => {
             source={{ uri: user.photoURL }}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Modal");
+          }}
+        >
           <Image
             className="w-14 h-14 rounded-full"
             source={require("../assets/tinder-logo.png")}
