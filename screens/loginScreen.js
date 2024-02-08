@@ -4,7 +4,7 @@ import {
   Text,
   View,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import {
   GoogleSignin,
@@ -18,37 +18,35 @@ export default function App() {
   const { signinWithGoogle, user, logOut, error, loading } = useAuth();
   const navigation = useNavigation();
 
-
   return (
     <>
-    <View className="flex-1">
-      <ImageBackground
-        resizeMode="cover"
-        style={{ flex: 1, position: "relative" }}
-        source={{ uri: "https://tinder.com/static/tinder.png" }}
-      >
-        <TouchableOpacity
-          className="absolute bottom-40 "
-          style={{ alignSelf: "center" }}
+      <View className="flex-1">
+        <ImageBackground
+          resizeMode="cover"
+          style={{ flex: 1, position: "relative" }}
+          source={{ uri: "https://tinder.com/static/tinder.png" }}
         >
-          <Text className="text-center">
-            {loading ? "loading..." : "Sign In"}
-          </Text>
-          <Text>{JSON.stringify(user)}</Text>
-          {error && <Text>error{JSON.stringify(error)}</Text>}
-          {user ? (
-            <Button title="logout" onPress={logOut} />
-          ) : (
-            <GoogleSigninButton
-              size={GoogleSigninButton.Size.Standard}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={signinWithGoogle}
-              style={{ alignSelf: "center" }}
-            />
-          )}
-        </TouchableOpacity>
-      </ImageBackground>
-    </View>
-  </>
+          <TouchableOpacity
+            className="absolute bottom-40 "
+            style={{ alignSelf: "center" }}
+          >
+            <Text className="text-center">
+              {loading ? "loading..." : "Sign In"}
+            </Text>
+            <Text>{JSON.stringify(user)}</Text>
+            {user ? (
+              <Button title="logout" onPress={logOut} />
+            ) : (
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Standard}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={signinWithGoogle}
+                style={{ alignSelf: "center" }}
+              />
+            )}
+          </TouchableOpacity>
+        </ImageBackground>
+      </View>
+    </>
   );
 }

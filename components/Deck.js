@@ -7,6 +7,13 @@ import AllCardsSwiped from "./AllCardsSwiped";
 const Deck = ({ dummyData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [allCardsSwiped, setAllCardsSwiped] = useState(false);
+
+  const handleSwipeAgain = () => {
+    console.log("swipe again");
+    setCurrentIndex(0);
+    setAllCardsSwiped(false);
+  };
+
   const handleSwiped = ({ swiped }) => {
     if (swiped) {
       console.log("swiped");
@@ -19,9 +26,9 @@ const Deck = ({ dummyData }) => {
   };
 
   return (
-    <View>
+    <View className="flex-1">
       {allCardsSwiped ? (
-        <AllCardsSwiped />
+        <AllCardsSwiped handleSwipeAgain={handleSwipeAgain} />
       ) : (
         <SwipeableCard
           profile={dummyData[currentIndex]}

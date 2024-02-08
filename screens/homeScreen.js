@@ -14,7 +14,7 @@ const HomeScreen = () => {
   console.log(user);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="flex-1 ">
       <View className="flex-row justify-between items-center px-5">
         <TouchableOpacity onPress={logOut}>
           <Image

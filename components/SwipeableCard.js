@@ -4,12 +4,9 @@ import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedGestureHandler,
-  withSpring,
   withTiming,
   interpolate,
   Extrapolation,
-  interpolateNode,
 } from "react-native-reanimated";
 import Card from "./Card";
 import { runOnJS } from "react-native-reanimated";
