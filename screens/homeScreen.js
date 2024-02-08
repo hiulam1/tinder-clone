@@ -37,20 +37,6 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
       <Deck dummyData={dummyData} />
-
-      {/* <Text>
-        {user ? (
-          <>
-            <Text>fds{JSON.stringify(user.email)}</Text>{" "}
-            <Button title="logout" onPress={logOut}></Button>
-          </>
-        ) : null}
-        {error && <Text>error{JSON.stringify(error)}</Text>}
-      </Text>
-      <Button
-        title="Go to Chat"
-        onPress={() => navigation.navigate("Chat")}
-      ></Button> */}
     </SafeAreaView>
   );
 };

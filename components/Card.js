@@ -11,8 +11,6 @@ const cardWidth = windowWidth * 0.9;
 const cardHeight = windowHeight * 0.85;
 
 const Card = ({ profile }) => {
-  // define swipe right and left functions
-
   return (
     <>
       <View style={styles.container}>
