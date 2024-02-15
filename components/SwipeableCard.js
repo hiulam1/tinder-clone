@@ -11,7 +11,6 @@ import Animated, {
 import Card from "./Card";
 import { runOnJS } from "react-native-reanimated";
 
-const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 
 const SwipeableCard = ({ profile, handleSwipe }) => {

@@ -32,7 +32,7 @@ const Card = ({ profile }) => {
             color="#148c5c"
             style={[styles.yesAndNoButton, styles.yesButton]}
           />
-          <Text style={styles.cardName}>{profile.firstName}</Text>
+          <Text style={styles.cardName}>{profile.displayName}</Text>
         </View>
       </View>
     </>

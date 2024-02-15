@@ -67,6 +67,7 @@ const ModalScreen = () => {
         <TextInput
           style={styles.text}
           placeholder="age"
+          keyboardType="numeric"
           onChangeText={setAge}
         ></TextInput>
         <TouchableOpacity
