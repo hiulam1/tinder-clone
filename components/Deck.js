@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLayoutEffect } from "react";
 import SwipeableCard from "./SwipeableCard";
 import AllCardsSwiped from "./AllCardsSwiped";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
@@ -39,20 +39,38 @@ const Deck = ({ dummyData }) => {
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setProfiles(snapshot.docs.map((doc) => doc.data()));
+      setProfiles(
+        snapshot.docs
+          .filter((doc) => doc.id !== user.uid)
+          .map((doc) => doc.data())
+      );
     });
     return () => unsub();
   }, []);
 
-  const handleSwiped = ({ swiped }) => {
-    if (swiped) {
-      console.log("swiped");
-      if (currentIndex < profiles.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        setAllCardsSwiped(true);
-      }
+  const handleRejected = () => {
+    const userSwiped = profiles[currentIndex];
+    console.log(
+      "swipe " +
+        userSwiped.displayName +
+        " rejected" +
+        user.uid +
+        " " +
+        userSwiped.id
+    );
+    setDoc(doc(db, "users", user.uid, "rejected", userSwiped.id), userSwiped);
+  };
+
+  const handleSwiped = ({ rejected, liked }) => {
+    if (rejected) {
+      console.log("rejected");
+      handleRejected();
     }
+    if (currentIndex < profiles.length - 1) {
+    } else {
+      setAllCardsSwiped(true);
+    }
+    setCurrentIndex(currentIndex + 1);
   };
 
   return (

@@ -25,11 +25,13 @@ const SwipeableCard = ({ profile, handleSwipe }) => {
       offset.value = e.translationX;
     })
     .onEnd((e) => {
-      if (Math.abs(offset.value) > swipeThreshold) {
+      if (offset.value < swipeThreshold * -1) {
         isSwiped.value = true;
-        runOnJS(handleSwipe)({ swiped: true });
-      } else {
-        isSwiped.value = false;
+        runOnJS(handleSwipe)({ rejected: true });
+      } else if (offset.value > swipeThreshold) {
+        console.log(offset.value);
+        console.log(swipeThreshold);
+        runOnJS(handleSwipe)({ liked: true });
       }
       offset.value = withTiming(0, { duration: 100 });
     });
