@@ -11,6 +11,8 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
@@ -24,6 +26,7 @@ const Deck = ({ dummyData }) => {
   const { user } = useAuth();
 
   const navigation = useNavigation();
+  const userSwiped = profiles[currentIndex];
 
   // function to handle swiping again, passed to child component
   const handleSwipeAgain = () => {
@@ -40,52 +43,24 @@ const Deck = ({ dummyData }) => {
         navigation.navigate("Modal");
       } else {
         console.log("Document data:", snapshot.data());
+        console.log(user.uid);
       }
     });
     return () => unsub();
   }, []);
 
-  const fetchSwipedProfiles = async ({ profileIds, profiles }) => {
-    if (profileIds.empty) {
-      console.log("No swiped profiles");
-    } else {
-      profiles = profileIds.docs.map((doc) => doc.id);
-      console.log("swiped profiles", profiles);
-    }
-  };
   // listener of all the profiles in the database
   useEffect(() => {
     const fetchRejectedProfiles = async () => {
       try {
-        let rejectedProfiles = [];
-        let likedProfiles = [];
+        const rejectedProfileIds = await fetchSwipedProfileIds("rejected");
+        const likedProfileIds = await fetchSwipedProfileIds("liked");
 
-        const rejectedProfileIds = await getDocs(
-          collection(db, "users", user.uid, "rejected")
-        );
-        const likedProfileIds = await getDocs(
-          collection(db, "users", user.uid, "liked")
-        );
-
-        fetchSwipedProfiles({
-          profileIDs: rejectedProfileIds,
-          profiles: rejectedProfiles,
-        });
-        fetchSwipedProfiles({
-          profileIDs: likedProfileIds,
-          profiles: likedProfiles,
-        });
-
-        rejectedProfiles =
-          rejectedProfiles.length > 0 ? rejectedProfiles : ["null"];
-        console.log("rejected profiles", rejectedProfiles);
-
-        likedProfiles = likedProfiles.length > 0 ? likedProfiles : ["null"];
-
-        const unsub = onSnapshot(
+        // filter out the profiles that have been rejected or liked
+        const renderFilteredProfiles = onSnapshot(
           query(
             collection(db, "users"),
-            where("id", "not-in", [...rejectedProfiles, ...likedProfiles])
+            where("id", "not-in", [...rejectedProfileIds, ...likedProfileIds])
           ),
           (snapshot) => {
             setProfiles(
@@ -95,7 +70,7 @@ const Deck = ({ dummyData }) => {
             );
           }
         );
-        return () => unsub();
+        return () => renderFilteredProfiles();
       } catch (error) {
         console.log("error fetching rejected profiles", error);
       }
@@ -105,17 +80,13 @@ const Deck = ({ dummyData }) => {
   }, [user.uid, db]);
 
   const addProfileToRejected = () => {
-    setDoc(
-      doc(db, "users", user.uid, "rejected", profiles[currentIndex].id),
-      profiles[currentIndex]
-    );
+    setDoc(doc(db, "users", user.uid, "rejected", userSwiped.id), userSwiped);
   };
 
   const addProfileToLiked = () => {
-    setDoc(
-      doc(db, "users", user.uid, "liked", profiles[currentIndex].id),
-      profiles[currentIndex]
-    );
+    setDoc(doc(db, "users", user.uid, "liked", userSwiped.id), userSwiped, {
+      timestamp: serverTimestamp(),
+    });
   };
 
   const renderNextCard = () => {
@@ -126,13 +97,46 @@ const Deck = ({ dummyData }) => {
     }
   };
 
+  const fetchSwipedProfileIds = async (collectionPath) => {
+    const querySnapshot = await getDocs(
+      collection(db, "users", user.uid, collectionPath)
+    );
+    if (querySnapshot.empty) {
+      console.log(`No profiles in ${collectionPath}`);
+      return ["null"];
+    } else {
+      return querySnapshot.docs.map((doc) => doc.id);
+    }
+  };
+
   const handleSwiped = ({ rejected, liked }) => {
     if (rejected) {
       addProfileToRejected();
     } else if (liked) {
       addProfileToLiked();
+      checkIfMatched(userSwiped.id);
     }
     renderNextCard();
+  };
+
+  const checkIfMatched = async (userSwipedId) => {
+    try {
+      const likeDocRef = doc(db, "users", userSwipedId, "liked", user.uid);
+      const checkForLike = await getDoc(likeDocRef);
+      if (!checkForLike.exists()) {
+        console.log("no match");
+      } else {
+        const matchDocRef = doc(collection(db, "matches"));
+        await setDoc(matchDocRef, {
+          [user.uid]: true,
+          [userSwipedId]: true,
+          timestamp: serverTimestamp(),
+        });
+        console.log("match added successfully");
+      }
+    } catch (error) {
+      console.log("error checking for match", error);
+    }
   };
 
   return (
