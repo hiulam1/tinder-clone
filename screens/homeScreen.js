@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity, Image } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
@@ -10,8 +10,7 @@ import dummyData from "../components/dummyData";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { user, error, firebaseError, logOut } = useAuth();
-  console.log(user);
+  const { user, logOut } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 ">

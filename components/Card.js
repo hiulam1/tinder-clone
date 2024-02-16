@@ -1,12 +1,11 @@
 import { View, Text, Image } from "react-native";
 import { Dimensions } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
-const goldenRatio = (1 + Math.sqrt(5)) / 2;
 const cardWidth = windowWidth * 0.9;
 const cardHeight = windowHeight * 0.85;
 

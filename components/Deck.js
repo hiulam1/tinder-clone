@@ -3,7 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useLayoutEffect } from "react";
 import SwipeableCard from "./SwipeableCard";
 import AllCardsSwiped from "./AllCardsSwiped";
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
@@ -37,40 +45,94 @@ const Deck = ({ dummyData }) => {
     return () => unsub();
   }, []);
 
+  const fetchSwipedProfiles = async ({ profileIds, profiles }) => {
+    if (profileIds.empty) {
+      console.log("No swiped profiles");
+    } else {
+      profiles = profileIds.docs.map((doc) => doc.id);
+      console.log("swiped profiles", profiles);
+    }
+  };
+  // listener of all the profiles in the database
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setProfiles(
-        snapshot.docs
-          .filter((doc) => doc.id !== user.uid)
-          .map((doc) => doc.data())
-      );
-    });
-    return () => unsub();
-  }, []);
+    const fetchRejectedProfiles = async () => {
+      try {
+        let rejectedProfiles = [];
+        let likedProfiles = [];
 
-  const handleRejected = () => {
-    const userSwiped = profiles[currentIndex];
-    console.log(
-      "swipe " +
-        userSwiped.displayName +
-        " rejected" +
-        user.uid +
-        " " +
-        userSwiped.id
+        const rejectedProfileIds = await getDocs(
+          collection(db, "users", user.uid, "rejected")
+        );
+        const likedProfileIds = await getDocs(
+          collection(db, "users", user.uid, "liked")
+        );
+
+        fetchSwipedProfiles({
+          profileIDs: rejectedProfileIds,
+          profiles: rejectedProfiles,
+        });
+        fetchSwipedProfiles({
+          profileIDs: likedProfileIds,
+          profiles: likedProfiles,
+        });
+
+        rejectedProfiles =
+          rejectedProfiles.length > 0 ? rejectedProfiles : ["null"];
+        console.log("rejected profiles", rejectedProfiles);
+
+        likedProfiles = likedProfiles.length > 0 ? likedProfiles : ["null"];
+
+        const unsub = onSnapshot(
+          query(
+            collection(db, "users"),
+            where("id", "not-in", [...rejectedProfiles, ...likedProfiles])
+          ),
+          (snapshot) => {
+            setProfiles(
+              snapshot.docs
+                .filter((doc) => doc.id !== user.uid)
+                .map((doc) => doc.data())
+            );
+          }
+        );
+        return () => unsub();
+      } catch (error) {
+        console.log("error fetching rejected profiles", error);
+      }
+    };
+
+    fetchRejectedProfiles();
+  }, [user.uid, db]);
+
+  const addProfileToRejected = () => {
+    setDoc(
+      doc(db, "users", user.uid, "rejected", profiles[currentIndex].id),
+      profiles[currentIndex]
     );
-    setDoc(doc(db, "users", user.uid, "rejected", userSwiped.id), userSwiped);
+  };
+
+  const addProfileToLiked = () => {
+    setDoc(
+      doc(db, "users", user.uid, "liked", profiles[currentIndex].id),
+      profiles[currentIndex]
+    );
+  };
+
+  const renderNextCard = () => {
+    if (currentIndex < profiles.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setAllCardsSwiped(true);
+    }
   };
 
   const handleSwiped = ({ rejected, liked }) => {
     if (rejected) {
-      console.log("rejected");
-      handleRejected();
+      addProfileToRejected();
+    } else if (liked) {
+      addProfileToLiked();
     }
-    if (currentIndex < profiles.length - 1) {
-    } else {
-      setAllCardsSwiped(true);
-    }
-    setCurrentIndex(currentIndex + 1);
+    renderNextCard();
   };
 
   return (

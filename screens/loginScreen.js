@@ -4,18 +4,13 @@ import {
   Text,
   View,
   TouchableOpacity,
-  StatusBar,
 } from "react-native";
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-} from "@react-native-google-signin/google-signin";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import useAuth from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 
 export default function App() {
-  const { signinWithGoogle, user, logOut, error, loading } = useAuth();
+  const { signinWithGoogle, user, logOut, loading } = useAuth();
   const navigation = useNavigation();
 
   return (

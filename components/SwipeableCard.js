@@ -20,6 +20,7 @@ const SwipeableCard = ({ profile, handleSwipe }) => {
   const offset = useSharedValue(0);
   const swipeThreshold = windowWidth / 2;
 
+  // pan gesture handler
   const pan = Gesture.Pan()
     .onChange((e) => {
       offset.value = e.translationX;
@@ -29,13 +30,12 @@ const SwipeableCard = ({ profile, handleSwipe }) => {
         isSwiped.value = true;
         runOnJS(handleSwipe)({ rejected: true });
       } else if (offset.value > swipeThreshold) {
-        console.log(offset.value);
-        console.log(swipeThreshold);
         runOnJS(handleSwipe)({ liked: true });
       }
       offset.value = withTiming(0, { duration: 100 });
     });
 
+  // animated style for swiping effect
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: offset.value * 2 },
