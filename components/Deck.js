@@ -28,6 +28,11 @@ const Deck = ({ dummyData }) => {
   const navigation = useNavigation();
   const userSwiped = profiles[currentIndex];
 
+  const userLoggedIn = async () => {
+    const userDocRef = doc(db, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+    return userDoc.data();
+  };
   // function to handle swiping again, passed to child component
   const handleSwipeAgain = () => {
     console.log("swipe again");
@@ -119,20 +124,26 @@ const Deck = ({ dummyData }) => {
     renderNextCard();
   };
 
-  const checkIfMatched = async (userSwipedId) => {
+  const addMatchToCollection = async () => {
+    const matchDocRef = doc(collection(db, "matches"));
+    await setDoc(matchDocRef, {
+      [user.uid]: loggedInUserData,
+      [userSwiped.id]: userSwiped,
+      timestamp: serverTimestamp(),
+    });
+    console.log("match added successfully");
+  };
+
+  const checkIfMatched = async () => {
     try {
-      const likeDocRef = doc(db, "users", userSwipedId, "liked", user.uid);
+      const likeDocRef = doc(db, "users", userSwiped.id, "liked", user.uid);
       const checkForLike = await getDoc(likeDocRef);
       if (!checkForLike.exists()) {
         console.log("no match");
       } else {
-        const matchDocRef = doc(collection(db, "matches"));
-        await setDoc(matchDocRef, {
-          [user.uid]: true,
-          [userSwipedId]: true,
-          timestamp: serverTimestamp(),
-        });
-        console.log("match added successfully");
+        const loggedInUserData = await userLoggedIn();
+        addMatchToCollection();
+        navigation.navigate("Match", { loggedInUserData, userSwiped });
       }
     } catch (error) {
       console.log("error checking for match", error);
