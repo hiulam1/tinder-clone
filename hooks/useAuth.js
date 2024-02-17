@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { WEBCLIENTID } from "@env"
+import { WEBCLIENTID } from "@env";
 import {
   GoogleSignin,
   statusCodes,

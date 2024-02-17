@@ -19,7 +19,7 @@ import useAuth from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 import NoProfiles from "./NoProfiles";
 
-const Deck = ({ dummyData }) => {
+const Deck = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [allCardsSwiped, setAllCardsSwiped] = useState(false);
   const [profiles, setProfiles] = useState([]);

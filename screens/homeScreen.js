@@ -6,8 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Deck from "../components/Deck";
 
-import dummyData from "../components/dummyData";
-
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { user, logOut } = useAuth();
@@ -35,7 +33,7 @@ const HomeScreen = () => {
           <Ionicons name="chatbubble-outline" size={30} color="black" />
         </TouchableOpacity>
       </View>
-      <Deck dummyData={dummyData} />
+      <Deck />
     </SafeAreaView>
   );
 };
