@@ -1,12 +1,14 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
-import useNavigation from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+
 import useAuth from "../hooks/useAuth";
 
 const ChatRow = ({ matchDetails }) => {
   const { user } = useAuth();
   const [matchedUser, setMatchedUser] = useState({});
   const [matchedPhoto, setMatchedPhoto] = useState("");
+  const navigation = useNavigation();
 
   useEffect(() => {
     const matchedUserID = matchDetails.users.filter(
@@ -21,6 +23,7 @@ const ChatRow = ({ matchDetails }) => {
 
   return (
     <TouchableOpacity
+      onPress={() => navigation.navigate("Messages", { matchedUser })}
       style={styles.boxShadow}
       className="flex-row items-center py-3 px-5 mx-3 my-2 rounded-lg bg-white"
     >

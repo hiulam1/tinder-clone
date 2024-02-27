@@ -6,6 +6,7 @@ import LoginScreen from "./screens/loginScreen"; // Fixed the file name casing
 import useAuth from "./hooks/useAuth"; // Added import statement for useAuth hook
 import ModalScreen from "./screens/modalScreen";
 import MatchScreen from "./screens/matchScreen";
+import MessagesScreen from "./screens/MessagesScreen";
 
 const stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ const StackNavigator = () => {
           <stack.Group>
             <stack.Screen name="Home" component={HomeScreen} />
             <stack.Screen name="Chat" component={ChatScreen} />
+            <stack.Screen name="Messages" component={MessagesScreen} />
           </stack.Group>
           <stack.Group
             screenOptions={{
