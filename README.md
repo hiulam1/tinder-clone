@@ -25,7 +25,6 @@ As this app requires custom native code, it cannot be used in Expo Go and would 
 User authentication using Google Sign-In<br>
 Swipe functionality for browsing profiles<br>
 Real-time messaging with matches<br>
-Firebase integration for backend services<br>
-Customizable UI components and themes<br><br>
+Firebase integration for backend services<br><br>
 
 Lastly, contributions are welcome! Please open an issue or submit a pull request to suggest improvements or new features.
