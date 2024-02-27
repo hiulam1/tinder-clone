@@ -29,9 +29,14 @@ const Deck = () => {
   const userSwiped = profiles[currentIndex];
 
   const userLoggedIn = async () => {
-    const userDocRef = doc(db, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
-    return userDoc.data();
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      console.log("user data", userDoc.data());
+      return userDoc.data();
+    } catch (error) {
+      console.log("error getting user data", error);
+    }
   };
   // function to handle swiping again, passed to child component
   const handleSwipeAgain = () => {
@@ -124,14 +129,21 @@ const Deck = () => {
     renderNextCard();
   };
 
-  const addMatchToCollection = async () => {
+  const addMatchToCollection = async (loggedInUserData) => {
     const matchDocRef = doc(collection(db, "matches"));
-    await setDoc(matchDocRef, {
-      [user.uid]: loggedInUserData,
-      [userSwiped.id]: userSwiped,
-      timestamp: serverTimestamp(),
-    });
-    console.log("match added successfully");
+    try {
+      await setDoc(matchDocRef, {
+        users: [user.uid, userSwiped.id],
+        userData: {
+          [user.uid]: loggedInUserData,
+          [userSwiped.id]: userSwiped,
+        },
+        timestamp: serverTimestamp(),
+      });
+      console.log("match added successfully");
+    } catch (error) {
+      console.log("error adding match", error);
+    }
   };
 
   const checkIfMatched = async () => {
@@ -142,7 +154,8 @@ const Deck = () => {
         console.log("no match");
       } else {
         const loggedInUserData = await userLoggedIn();
-        addMatchToCollection();
+        console.log("dsfdsa", loggedInUserData);
+        addMatchToCollection(loggedInUserData);
         navigation.navigate("Match", { loggedInUserData, userSwiped });
       }
     } catch (error) {
