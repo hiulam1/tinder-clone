@@ -8,12 +8,14 @@ const ChatRow = ({ matchDetails }) => {
   const { user } = useAuth();
   const [matchedUser, setMatchedUser] = useState({});
   const [matchedPhoto, setMatchedPhoto] = useState("");
+  const [matchID, setMatchID] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
     const matchedUserID = matchDetails.users.filter(
       (matchedUserID) => matchedUserID != user.uid
     );
+    setMatchID(matchDetails.id);
     const userData = matchDetails.userData;
     setMatchedUser(userData[matchedUserID[0]]);
   }, [matchDetails, user]);
@@ -23,7 +25,12 @@ const ChatRow = ({ matchDetails }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("Messages", { matchedUser })}
+      onPress={() =>
+        navigation.navigate("Messages", {
+          matchedUser,
+          matchID,
+        })
+      }
       style={styles.boxShadow}
       className="flex-row items-center py-3 px-5 mx-3 my-2 rounded-lg bg-white"
     >
