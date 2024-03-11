@@ -9,13 +9,20 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import useAuth from "../hooks/useAuth";
 import { useRoute } from "@react-navigation/native";
 import SenderMessage from "../components/SenderMessage";
 import ReceiverMessage from "../components/ReceiverMessage";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  serverTimestamp,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../firebase";
 
 const MessagesScreen = () => {
@@ -40,6 +47,29 @@ const MessagesScreen = () => {
     }
   };
 
+  useEffect(() => {
+    try {
+      const q = query(
+        collection(db, "matches", matchID, "messages"),
+        orderBy("timestamp", "desc")
+      );
+      const unsub = onSnapshot(
+        q,
+        (snapshot) =>
+          setMessages(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          ),
+        console.log("messages", messages)
+      );
+      return () => unsub();
+    } catch (error) {
+      console.log("error getting messages", error);
+    }
+  }, [db, matchedUser, user]);
+
   return (
     <SafeAreaView className="flex-1">
       <Header title={matchedUser.displayName} callEnabled={true} />
@@ -55,9 +85,9 @@ const MessagesScreen = () => {
             className="pl-4"
             renderItem={({ item: message }) => {
               message.userId === user.uid ? (
-                <SenderMessage />
+                <SenderMessage message={message} />
               ) : (
-                <ReceiverMessage />
+                <ReceiverMessage message={message} />
               );
             }}
           />

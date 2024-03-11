@@ -7,7 +7,7 @@ import ChatList from "../components/ChatList";
 const ChatScreen = () => {
   return (
     <SafeAreaView>
-      <Header title="Chat" callEnabled={true}></Header>
+      <Header title="Chat" callEnabled={false}></Header>
       <ChatList />
     </SafeAreaView>
   );

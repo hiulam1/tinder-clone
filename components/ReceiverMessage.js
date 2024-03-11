@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import React from "react";
 
 const ReceiverMessage = ({ message }) => {
@@ -11,7 +11,7 @@ const ReceiverMessage = ({ message }) => {
         className="h-12 w-12 rounded-full absolute top-0 -left-14"
         source={{ uri: message.photoURL }}
       />
-      <Text className="text-white">{message.content}</Text>
+      <Text className="text-white">{message.message}</Text>
     </View>
   );
 };
